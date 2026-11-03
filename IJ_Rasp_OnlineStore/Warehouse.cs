@@ -43,5 +43,19 @@ namespace IJ_Rasp_OnlineStore
             _inventory[good.Name] -= quantity;
             return new Dictionary<string, int> { { good.Name, quantity } };
         }
+
+        public void ShowStock()
+        {
+            if (_inventory.Count == 0)
+            {
+                Console.WriteLine("The warehouse is empty.");
+                return;
+            }
+
+            Console.WriteLine("Current stock in the warehouse:");
+
+            foreach (var item in _inventory)
+                Console.WriteLine($"{item.Key}: {item.Value}");
+        }
     }
 }
