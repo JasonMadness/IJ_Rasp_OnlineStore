@@ -4,14 +4,16 @@
     {
         static void Main(string[] args)
         {
-
+            Warehouse warehouse = new Warehouse();
+            Good iPhone12 = new Good("IPhone 12");
+            warehouse.Deliver(iPhone12, 10);
         }
     }
 }
 
 /*
  * ТЗ
- * Good iPhone12 = new Good("IPhone 12");
+Good iPhone12 = new Good("IPhone 12");
 Good iPhone11 = new Good("IPhone 11");
 
 Warehouse warehouse = new Warehouse();
