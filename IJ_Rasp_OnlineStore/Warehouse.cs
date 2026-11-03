@@ -26,7 +26,7 @@ namespace IJ_Rasp_OnlineStore
                 _inventory[good.Name] = quantity;
         }
 
-        public Dictionary<string, int> GetStock(Good good, int quantity)
+        public Dictionary<string, int> TakeFromStock(Good good, int quantity)
         {
             if (good == null)
                 throw new ArgumentNullException(nameof(good));
@@ -34,11 +34,8 @@ namespace IJ_Rasp_OnlineStore
             if (quantity <= 0)
                 throw new ArgumentException("Quantity must be a positive integer.", nameof(quantity));
 
-            if (_inventory.ContainsKey(good.Name) == false)
-                Console.WriteLine($"The product '{good.Name}' is not available in the warehouse.");
-
-            if (_inventory[good.Name] < quantity)
-                Console.WriteLine($"Insufficient stock for '{good.Name}'. Available: {_inventory[good.Name]}, Requested: {quantity}.");
+            if (_inventory.TryGetValue(good.Name, out int available) == false || available < quantity)
+                throw new InvalidOperationException($"Insufficient stock for '{good.Name}'. Available: {available}, requested: {quantity}.");
 
             _inventory[good.Name] -= quantity;
             return new Dictionary<string, int> { { good.Name, quantity } };
