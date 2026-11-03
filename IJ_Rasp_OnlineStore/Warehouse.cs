@@ -26,19 +26,27 @@ namespace IJ_Rasp_OnlineStore
                 _inventory[good.Name] = quantity;
         }
 
-        public Dictionary<string, int> TakeFromStock(Good good, int quantity)
+        public int GetAvailable(Good good)
         {
             if (good == null)
                 throw new ArgumentNullException(nameof(good));
 
-            if (quantity <= 0)
-                throw new ArgumentException("Quantity must be a positive integer.", nameof(quantity));
+            if (_inventory.ContainsKey(good.Name))
+                return _inventory[good.Name];
 
-            if (_inventory.TryGetValue(good.Name, out int available) == false || available < quantity)
-                throw new InvalidOperationException($"Insufficient stock for '{good.Name}'. Available: {available}, requested: {quantity}.");
+            return 0;
+        }
+
+        public void EnsureAvailable(Good good, int quantity)
+        {
+            ValidateRequest(good, quantity);
+        }
+
+        public void TakeFromStock(Good good, int quantity)
+        {
+            ValidateRequest(good, quantity);
 
             _inventory[good.Name] -= quantity;
-            return new Dictionary<string, int> { { good.Name, quantity } };
         }
 
         public void ShowStock()
@@ -53,6 +61,20 @@ namespace IJ_Rasp_OnlineStore
 
             foreach (var item in _inventory)
                 Console.WriteLine($"{item.Key}: {item.Value}");
+        }
+
+        private void ValidateRequest(Good good, int quantity)
+        {
+            if (good == null)
+                throw new ArgumentNullException(nameof(good));
+
+            if (quantity <= 0)
+                throw new ArgumentException("Quantity must be a positive integer.", nameof(quantity));
+
+            int available = GetAvailable(good);
+
+            if (available < quantity)
+                throw new InvalidOperationException($"Insufficient stock for '{good.Name}'. Available: {available}, requested: {quantity}.");
         }
     }
 }
