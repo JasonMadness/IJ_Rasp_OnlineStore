@@ -9,9 +9,7 @@ namespace IJ_Rasp_OnlineStore
         public Good(string name)
         {
             if (string.IsNullOrWhiteSpace(name))
-            {
                 throw new ArgumentException("Name cannot be null or whitespace.", nameof(name));
-            }
 
             _name = name;
         }
