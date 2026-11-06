@@ -3,13 +3,13 @@ using System.Collections.Generic;
 
 namespace IJ_Rasp_OnlineStore
 {
-    internal class Warehouse
+    internal class Warehouse : IStock
     {
-        private Dictionary<string, int> _inventory;
+        private Dictionary<Good, int> _inventory;
 
         public Warehouse()
         {
-            _inventory = new Dictionary<string, int>();
+            _inventory = new Dictionary<Good, int>();
         }
 
         public void Deliver(Good good, int quantity)
@@ -20,7 +20,7 @@ namespace IJ_Rasp_OnlineStore
             if (quantity <= 0)
                 throw new ArgumentException("Quantity must be a positive integer.", nameof(quantity));
 
-            _inventory[good.Name] = GetAvailable(good) + quantity;
+            _inventory[good] = GetAvailable(good) + quantity;
         }
 
         public void EnsureAvailable(Good good, int quantity)
@@ -32,7 +32,7 @@ namespace IJ_Rasp_OnlineStore
         {
             ValidateRequest(good, quantity);
 
-            _inventory[good.Name] -= quantity;
+            _inventory[good] -= quantity;
         }
 
         public void ShowStock()
@@ -46,12 +46,12 @@ namespace IJ_Rasp_OnlineStore
             Console.WriteLine("Current stock in the warehouse:");
 
             foreach (var item in _inventory)
-                Console.WriteLine($"{item.Key}: {item.Value}");
+                Console.WriteLine($"{item.Key.Name}: {item.Value}");
         }
 
         private int GetAvailable(Good good)
         {
-            if (_inventory.TryGetValue(good.Name, out int quantity))
+            if (_inventory.TryGetValue(good, out int quantity))
                 return quantity;
 
             return 0;

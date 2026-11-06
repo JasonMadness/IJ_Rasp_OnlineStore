@@ -5,26 +5,26 @@ namespace IJ_Rasp_OnlineStore
 {
     internal class Cart
     {
-        private Warehouse _warehouse;
-        private Dictionary<string, int> _items;
+        private IStock _stock;
+        private Dictionary<Good, int> _items;
 
-        public Cart(Warehouse warehouse)
+        public Cart(IStock stock)
         {
-            if (warehouse == null)
-                throw new ArgumentNullException(nameof(warehouse));
+            if (stock == null)
+                throw new ArgumentNullException(nameof(stock));
 
-            _warehouse = warehouse;
-            _items = new Dictionary<string, int>();
+            _stock = stock;
+            _items = new Dictionary<Good, int>();
         }
 
         public void Add(Good good, int quantity)
         {
-            _warehouse.EnsureAvailable(good, quantity);
+            _stock.EnsureAvailable(good, quantity);
 
-            if (_items.ContainsKey(good.Name))
-                _items[good.Name] += quantity;
+            if (_items.ContainsKey(good))
+                _items[good] += quantity;
             else
-                _items[good.Name] = quantity;
+                _items[good] = quantity;
         }
 
         public Order Order()
@@ -32,8 +32,8 @@ namespace IJ_Rasp_OnlineStore
             if (_items.Count == 0)
                 throw new InvalidOperationException("The cart is empty.");
 
-            foreach (KeyValuePair<string, int> item in _items)
-                _warehouse.TakeFromStock(new Good(item.Key), item.Value);
+            foreach (KeyValuePair<Good, int> item in _items)
+                _stock.TakeFromStock(item.Key, item.Value);
 
             _items.Clear();
             return new Order();
@@ -50,7 +50,7 @@ namespace IJ_Rasp_OnlineStore
             Console.WriteLine("Current goods in the cart:");
 
             foreach (var item in _items)
-                Console.WriteLine($"{item.Key}: {item.Value}");
+                Console.WriteLine($"{item.Key.Name}: {item.Value}");
         }
     }
 }
