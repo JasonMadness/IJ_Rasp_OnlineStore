@@ -4,19 +4,19 @@ namespace IJ_Rasp_OnlineStore
 {
     internal class Shop
     {
-        private Cart _cart;
+        private IStock _stock;
 
-        public Shop(Warehouse warehouse)
+        public Shop(IStock stock)
         {
-            if (warehouse == null)
-                throw new ArgumentNullException(nameof(warehouse));
+            if (stock == null)
+                throw new ArgumentNullException(nameof(stock));
 
-            _cart = new Cart(warehouse);
+            _stock = stock;
         }
 
         public Cart Cart()
         {
-            return _cart;
+            return new Cart(_stock);
         }
     }
 }
