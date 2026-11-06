@@ -1,37 +1,46 @@
-﻿namespace IJ_Rasp_OnlineStore
+using System;
+
+namespace IJ_Rasp_OnlineStore
 {
     internal class Program
     {
         static void Main(string[] args)
         {
-            Warehouse warehouse = new Warehouse();
             Good iPhone12 = new Good("IPhone 12");
+            Good iPhone11 = new Good("IPhone 11");
+
+            Warehouse warehouse = new Warehouse();
+            Shop shop = new Shop(warehouse);
+
             warehouse.Deliver(iPhone12, 10);
+            warehouse.Deliver(iPhone11, 1);
+
+            warehouse.ShowStock();
+
+            Cart cart = shop.Cart();
+
+            try
+            {
+                cart.Add(iPhone12, 4);
+                cart.Add(iPhone11, 3);
+            }
+            catch (InvalidOperationException exception)
+            {
+                Console.WriteLine(exception.Message);
+            }
+
+            cart.ShowGoods();
+
+            Console.WriteLine(cart.Order().Paylink);
+
+            try
+            {
+                cart.Add(iPhone12, 9);
+            }
+            catch (InvalidOperationException exception)
+            {
+                Console.WriteLine(exception.Message);
+            }
         }
     }
 }
-
-/*
- * ТЗ
-Good iPhone12 = new Good("IPhone 12");
-Good iPhone11 = new Good("IPhone 11");
-
-Warehouse warehouse = new Warehouse();
-
-Shop shop = new Shop(warehouse);
-
-warehouse.Delive(iPhone12, 10);
-warehouse.Delive(iPhone11, 1);
-
-//Вывод всех товаров на складе с их остатком
-
-Cart cart = shop.Cart();
-cart.Add(iPhone12, 4);
-cart.Add(iPhone11, 3); //при такой ситуации возникает ошибка так, как нет нужного количества товара на складе
-
-//Вывод всех товаров в корзине
-
-Console.WriteLine(cart.Order().Paylink);
-
-cart.Add(iPhone12, 9); //Ошибка, после заказа со склада убираются заказанные товары
- */
