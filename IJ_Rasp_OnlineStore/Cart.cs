@@ -17,18 +17,9 @@ namespace IJ_Rasp_OnlineStore
             _items = new Dictionary<string, int>();
         }
 
-        public int GetQuantity(Good good)
-        {
-            if (good == null)
-                throw new ArgumentNullException(nameof(good));
-
-            return _items.TryGetValue(good.Name, out int quantity) ? quantity : 0;
-        }
-
         public void Add(Good good, int quantity)
         {
             _warehouse.EnsureAvailable(good, quantity);
-            _warehouse.TakeFromStock(good, quantity);
 
             if (_items.ContainsKey(good.Name))
                 _items[good.Name] += quantity;
@@ -36,27 +27,16 @@ namespace IJ_Rasp_OnlineStore
                 _items[good.Name] = quantity;
         }
 
-        public IReadOnlyDictionary<string, int> GetItems()
-        {
-            return _items;
-        }
-
-        public void Clear()
-        {
-            foreach (KeyValuePair<string, int> item in _items)
-                _warehouse.ReturnToStock(new Good(item.Key), item.Value);
-
-            _items.Clear();
-        }
-
         public Order Order()
         {
             if (_items.Count == 0)
                 throw new InvalidOperationException("The cart is empty.");
 
-            Order order = new Order(_items);
+            foreach (KeyValuePair<string, int> item in _items)
+                _warehouse.TakeFromStock(new Good(item.Key), item.Value);
+
             _items.Clear();
-            return order;
+            return new Order();
         }
 
         public void ShowGoods()
