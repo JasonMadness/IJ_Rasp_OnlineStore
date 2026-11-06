@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 
 namespace IJ_Rasp_OnlineStore
@@ -14,16 +14,7 @@ namespace IJ_Rasp_OnlineStore
 
         public void Deliver(Good good, int quantity)
         {
-            if (good == null)
-                throw new ArgumentNullException(nameof(good));
-
-            if (quantity <= 0)
-                throw new ArgumentException("Quantity must be a positive integer.", nameof(quantity));
-
-            if (_inventory.ContainsKey(good.Name))
-                _inventory[good.Name] += quantity;
-            else
-                _inventory[good.Name] = quantity;
+            AddQuantity(good, quantity);
         }
 
         public int GetAvailable(Good good)
@@ -49,6 +40,11 @@ namespace IJ_Rasp_OnlineStore
             _inventory[good.Name] -= quantity;
         }
 
+        public void ReturnToStock(Good good, int quantity)
+        {
+            AddQuantity(good, quantity);
+        }
+
         public void ShowStock()
         {
             if (_inventory.Count == 0)
@@ -61,6 +57,17 @@ namespace IJ_Rasp_OnlineStore
 
             foreach (var item in _inventory)
                 Console.WriteLine($"{item.Key}: {item.Value}");
+        }
+
+        private void AddQuantity(Good good, int quantity)
+        {
+            if (good == null)
+                throw new ArgumentNullException(nameof(good));
+
+            if (quantity <= 0)
+                throw new ArgumentException("Quantity must be a positive integer.", nameof(quantity));
+
+            _inventory[good.Name] = GetAvailable(good) + quantity;
         }
 
         private void ValidateRequest(Good good, int quantity)
